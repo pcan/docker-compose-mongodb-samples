@@ -1,0 +1,11 @@
+version: '2'
+services:
+
+  mongo_simple:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db
+    volumes:
+      - ./data:/data/db
+    ports:
+      - 27017:27017
+

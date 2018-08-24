@@ -1,0 +1,41 @@
+version: '2'
+services:
+
+  mongo_config:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --configsvr --replSet configsrv 
+    volumes:
+      - ./data_config:/data/db
+      - ./scripts:/scripts
+
+  mongo_shard1:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr
+    volumes:
+      - ./data_shard1:/data/db
+
+  mongo_shard2:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr
+    volumes:
+      - ./data_shard2:/data/db
+
+  mongo_shard3:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr
+    volumes:
+      - ./data_shard3:/data/db
+
+  mongo_router:
+    image: mongo
+    command: mongos --port 27017 --bind_ip_all --configdb configsrv/mongo_config:27017
+    volumes:
+      - ./scripts:/scripts
+    ports:
+      - 27017:27017
+    depends_on:
+      - mongo_config
+      - mongo_shard1
+      - mongo_shard2
+      - mongo_shard3
+

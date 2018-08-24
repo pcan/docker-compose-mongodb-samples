@@ -1,0 +1,27 @@
+version: '2'
+services:
+
+  mongo_replica1:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --replSet mongo_rs
+    volumes:
+      - ./data_replica1:/data/db
+      - ./scripts:/scripts
+    ports:
+      - 27017:27017
+
+  mongo_replica2:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --replSet mongo_rs
+    volumes:
+      - ./data_replica2:/data/db
+    ports:
+      - 27018:27017
+
+  mongo_replica3:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --replSet mongo_rs
+    volumes:
+      - ./data_replica3:/data/db
+    ports:
+      - 27019:27017
