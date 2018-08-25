@@ -1,0 +1,90 @@
+version: '2'
+services:
+
+  mongo_config:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --configsvr --replSet configsrv 
+    volumes:
+      - ./data/config:/data/db
+      - ./scripts:/scripts
+
+
+  mongo_shard1a:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard1_rs
+    volumes:
+      - ./scripts:/scripts
+      - ./data/shard1a:/data/db
+
+  mongo_shard1b:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard1_rs
+    volumes:
+      - ./data/shard1b:/data/db
+
+  mongo_shard1c:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard1_rs
+    volumes:
+      - ./data/shard1c:/data/db
+
+
+  mongo_shard2a:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard2_rs
+    volumes:
+      - ./scripts:/scripts
+      - ./data/shard2a:/data/db
+
+  mongo_shard2b:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard2_rs
+    volumes:
+      - ./data/shard2b:/data/db
+
+  mongo_shard2c:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard2_rs
+    volumes:
+      - ./data/shard2c:/data/db
+
+
+  mongo_shard3a:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard3_rs
+    volumes:
+      - ./scripts:/scripts
+      - ./data/shard3a:/data/db
+
+  mongo_shard3b:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard3_rs
+    volumes:
+      - ./data/shard3b:/data/db
+
+  mongo_shard3c:
+    image: mongo
+    command: mongod --port 27017 --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --shardsvr --replSet shard3_rs
+    volumes:
+      - ./data/shard3c:/data/db
+
+
+  mongo_router:
+    image: mongo
+    command: mongos --port 27017 --bind_ip_all --configdb configsrv/mongo_config:27017
+    volumes:
+      - ./scripts:/scripts
+    ports:
+      - 27017:27017
+    depends_on:
+      - mongo_config
+      - mongo_shard1a
+      - mongo_shard1b
+      - mongo_shard1c
+      - mongo_shard2a
+      - mongo_shard2b
+      - mongo_shard2c
+      - mongo_shard3a
+      - mongo_shard3b
+      - mongo_shard3c
+
